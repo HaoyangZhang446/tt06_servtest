@@ -51,7 +51,7 @@ module spi_top
   // Wishbone signals
   input                            wb_clk_i;         // master clock input
   input                            wb_rst_i;         // synchronous active high reset
-  input                      [4:0] wb_adr_i;         // lower address bits
+  input                   [32-1:0] wb_adr_i;         // lower address bits, modified from 4-1
   input                   [32-1:0] wb_dat_i;         // databus input
   output                  [32-1:0] wb_dat_o;         // databus output
   input                      [3:0] wb_sel_i;         // byte select inputs
