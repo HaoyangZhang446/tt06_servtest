@@ -32,7 +32,7 @@ project:
     - "spi_wb/spi_defines.v"
     - "spi_wb/spi_shift.v"
     - "spi_wb/spi_top.v"
-    - "spi_wb/timescale.v"   
+
 
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
