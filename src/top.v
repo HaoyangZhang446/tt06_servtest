@@ -1,7 +1,7 @@
 `default_nettype none
 
 // Keep I/O fixed for TinyTapeout
-module gregdavill_serv_top(
+module tt_um_haoyang_serv(
 
   input  wire [7:0] ui_in,	// Dedicated inputs
 	output wire [7:0] uo_out,	// Dedicated outputs
