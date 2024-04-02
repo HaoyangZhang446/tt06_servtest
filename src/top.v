@@ -197,12 +197,12 @@ spi_top spibridge( // input from serv or user (clk and reset)
 .wb_dat_o   (wb_mem_rdt),// to serv
 .wb_sel_i   (wb_mem_sel),
 .wb_we_i    (wb_mem_we ),
-.wb_stb_i   (1),
+.wb_stb_i   (1'b1),
 .wb_cyc_i   (wb_mem_cyc),
 .wb_ack_o   (wb_mem_ack),// to serv
 .wb_err_o   (uio_out[0]),// to user
 .wb_int_o   (uio_out[1]),// to user
-.ss_pad_o   (uo_out[3]),
+.ss_pad_o   (uio_out),
 .sclk_pad_o (uo_out[4]),
 .mosi_pad_o (uo_out[5]),
 .miso_pad_i (data) // ui_in[1]
