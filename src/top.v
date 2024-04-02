@@ -12,6 +12,13 @@ module tt_um_haoyang_serv(
 	input  wire       clk,
 	input  wire       rst_n
   );
+  //
+  assign uio_oe = 8'hff;
+
+  reg [7:0] tempout = 8'b0;
+  assign uo_out[7:4]=tempout[7:4];
+
+ //
 
   wire serv_clk =   clk; // cpu clock
   wire spi_clk =      ui_in[0]; // spi clock
@@ -22,7 +29,8 @@ module tt_um_haoyang_serv(
   //  2. scan data
   //  3. clk for SC
 
-  wire timer_irq;
+  wire timer_irq =ui_in[3]; // temp set
+
 
   parameter reset_strategy = "MINI";
   parameter sim = 0;
@@ -40,9 +48,9 @@ module tt_um_haoyang_serv(
   wire 	      wen1;
   wire 	      wdata0;
   wire 	      wdata1;
-  wire 	      rf_ready;
-  wire 	      rdata0;
-  wire 	      rdata1;
+  wire 	      rf_ready = ui_in[4]; //temp set
+  wire 	      rdata0   = ui_in[5]; //temp set
+  wire 	      rdata1   = ui_in[6]; //temp set
 
   wire [31:0] 	wb_ibus_adr;
   wire [31:0] 	wb_ibus_rdt;
