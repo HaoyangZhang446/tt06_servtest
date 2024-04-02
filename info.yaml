@@ -15,23 +15,25 @@ project:
   
   # List your project's source files here. Source files must be in ./src and you must list each source file separately, one per line:
   source_files:        
-    -"top.v"
-    -"scanchain.v"
-    -"wb_mux.v"
-    -"blocks/serv_top.v"
-    -"blocks/serv_mem_if.v"
-    -"blocks/serv_rf_if.v"
-    -"blocks/serv_alu.v"
-    -"blocks/serv_ctrl.v"
-    -"blocks/serv_bufreg2.v"
-    -"blocks/serv_bufreg.v"
-    -"blocks/serv_immdec.v"
-    -"blocks/serv_decode.v"
-    -"blocks/serv_state.v"
-    -"blocks/serv_csr.v"
-    -"servant_arbiter.v"
-    -"servant_mux.v"
-    -"servant_gpio.v"
+    - "top.v"
+    - "blocks/serv_top.v"
+    - "blocks/serv_mem_if.v"
+    - "blocks/serv_rf_if.v"
+    - "blocks/serv_alu.v"
+    - "blocks/serv_ctrl.v"
+    - "blocks/serv_bufreg2.v"
+    - "blocks/serv_bufreg.v"
+    - "blocks/serv_immdec.v"
+    - "blocks/serv_decode.v"
+    - "blocks/serv_state.v"
+    - "blocks/serv_csr.v"
+    - "servant_arbiter.v"
+    - "spi_wb/spi_clgen.v"
+    - "spi_wb/spi_defines.v"
+    - "spi_wb/spi_shift.v"
+    - "spi_wb/spi_top.v"
+    - "spi_wb/timescale.v"   
+
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:

@@ -2,17 +2,25 @@
 
 // Keep I/O fixed for TinyTapeout
 module gregdavill_serv_top(
-    input [7:0] io_in,
-    output [7:0] io_out
+
+  input  wire [7:0] ui_in,	// Dedicated inputs
+	output wire [7:0] uo_out,	// Dedicated outputs
+	input  wire [7:0] uio_in,	// IOs: Input path
+	output wire [7:0] uio_out,	// IOs: Output path
+	output wire [7:0] uio_oe,	// IOs: Enable path (active high: 0=input, 1=output)
+	input  wire       ena,
+	input  wire       clk,
+	input  wire       rst_n
   );
 
-  wire clk =   io_in[0];
-  wire reset = io_in[7];
-
-  wire data =         io_in[4];
-  wire scan_select =  io_in[5];
-  wire latch_enable = io_in[6];
-  wire serv_clk =     io_in[7];
+  wire serv_clk =   clk; // cpu clock
+  wire spi_clk =      ui_in[0]; // spi clock
+  wire data =         ui_in[1];
+  wire reset =        ui_in[2];
+  // if need scan chain, need:
+  //  1. data select
+  //  2. scan data
+  //  3. clk for SC
 
   wire timer_irq;
 
@@ -90,8 +98,8 @@ module gregdavill_serv_top(
     .o_wb_cpu_sel (wb_mem_sel),
     .o_wb_cpu_we  (wb_mem_we ),
     .o_wb_cpu_cyc (wb_mem_cyc),
-    .i_wb_cpu_rdt (wb_mem_rdt),
-    .i_wb_cpu_ack (wb_mem_ack)
+    .i_wb_cpu_rdt (wb_mem_rdt), // scan chain
+    .i_wb_cpu_ack (wb_mem_ack)  // scan chain
   );
 
 
@@ -137,48 +145,68 @@ module gregdavill_serv_top(
   );
 
 
-  scanchain_local #(
-    .SCAN_LENGTH(96))
-  u_scanchain_local
-  (
-    // Inputs from TinyTapeout scanchain to our internal scanchain
-    .clk_in          (clk),
-    .data_in         (data),
-    .scan_select_in  (scan_select),
+  // scanchain_local #(
+  //   .SCAN_LENGTH(96))
+  // u_scanchain_local
+  // (
+  //   // Inputs from TinyTapeout scanchain to our internal scanchain
+  //   .clk_in          (clk),
+  //   .data_in         (data),
+  //   .scan_select_in  (scan_select),
 
-    // Pass all signals out from our internal scanchain, only really need data
-    .clk_out         (io_out[0]),
-    .data_out        (io_out[1]),
-    .scan_select_out (io_out[2]),
+  //   // Pass all signals out from our internal scanchain, only really need data
+  //   .clk_out         (uo_out[0]),
+  //   .data_out        (uo_out[1]),
+  //   .scan_select_out (uo_out[2]),
 
-    // data
-    .module_data_out ({
-      // Bus interface
-      wb_mem_adr[31:0],   // 32
-      wb_mem_dat,         // 32
-      wb_mem_sel,         // 4
-      wb_mem_we,          // 1
-      wb_mem_cyc,         // 1
-      // RF interface
-      rf_wreq,            // 1
-      rf_rreq,            // 1
-      wreg0,              // 5
-      wreg1,              // 5
-      wen0,               // 1
-      wen1,               // 1
-      wdata0,             // 1
-      wdata1,             // 1
-      rreg0,              // 5
-      rreg1}),            // 5
+  //   // data
+  //   .module_data_out ({
+  //     // Bus interface 96
+  //     wb_mem_adr[31:0],   // 32
+  //     wb_mem_dat,         // 32
+  //     wb_mem_sel,         // 4
+  //     wb_mem_we,          // 1
+  //     wb_mem_cyc,         // 1
+  //     // RF interface
+  //     rf_wreq,            // 1
+  //     rf_rreq,            // 1
+  //     wreg0,              // 5
+  //     wreg1,              // 5
+  //     wen0,               // 1
+  //     wen1,               // 1
+  //     wdata0,             // 1
+  //     wdata1,             // 1
+  //     rreg0,              // 5
+  //     rreg1}),            // 5
 
-    .module_data_in  ({
-      // Bus interface
-      wb_mem_rdt,         // 32
-      wb_mem_ack,         // 1
-      timer_irq,          // 1
-      rf_ready,           // 1
-      rdata0,             // 1
-      rdata1})            // 1
-  );
+  //   .module_data_in  ({
+  //     // Bus interface
+  //     wb_mem_rdt,         // 32
+  //     wb_mem_ack,         // 1
+  //     timer_irq,          // 1
+  //     rf_ready,           // 1
+  //     rdata0,             // 1
+  //     rdata1})            // 1
+  // );
+
+spi_top spibridge( // input from serv or user (clk and reset)
+.wb_clk_i   (spi_clk ),
+.wb_rst_i   (reset),   // ui_in[2]
+.wb_adr_i   (wb_mem_adr),
+.wb_dat_i   (wb_mem_dat),
+.wb_dat_o   (wb_mem_rdt),// to serv
+.wb_sel_i   (wb_mem_sel),
+.wb_we_i    (wb_mem_we ),
+.wb_stb_i   (1),
+.wb_cyc_i   (wb_mem_cyc),
+.wb_ack_o   (wb_mem_ack),// to serv
+.wb_err_o   (uio_out[0]),// to user
+.wb_int_o   (uio_out[1]),// to user
+.ss_pad_o   (uo_out[3]),
+.sclk_pad_o (uo_out[4]),
+.mosi_pad_o (uo_out[5]),
+.miso_pad_i (data) // ui_in[1]
+);
+
 
 endmodule
